@@ -1,0 +1,7 @@
+---
+published: true
+title: teste
+layout: post
+categories: [teste]
+---
+teste
