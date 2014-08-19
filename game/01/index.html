@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Meu Primeiro Jogo HTML5</title>
+		
+		<style type="text/css">
+			body{
+				background-color: #0099CC;
+			}
+			canvas {
+				border: 4px solid #fff;
+			}
+		</style>
+
+		<script type="text/javascript">
+
+			// define variaveis globais - player
+			var jogadorAltura;
+			var jogadorLargura;
+			var jogadorPosicaoX;
+			var jogadorPosicaoY;
+			var jogadorVelocidade;
+			var jogadorPontos;
+
+			// define variaveis globais - bola
+			var bolaRaio;
+			var bolaPosicaoX;
+			var bolaPosicaoY;
+			var bolaVelocidade;
+
+			var colisao;
+
+			function inicializar() {
+				// define o numero inicial de colisoes
+				colisao = false;
+				
+				// define as propriedades do player
+				playerProperty();
+				// define as propriedades da bola
+				ballProperty();
+				
+				// captura teclas precionadas
+				keyListener();
+
+
+				// define onde sera "construido" o jogo
+				canvas  = document.getElementById("canvas");
+				// getContext(2d) retorna obj com propriedades de desenho (2d no caso)
+				context = canvas.getContext("2d"); 
+
+				// defiene o intervalo e a funcao de atualização de frame
+				setInterval(gameLoop, 30);
+			};
+
+			function playerProperty() {
+				// define numero de pontos iniciais
+				jogadorPontos = 0;
+				// define o tamanho do player
+				jogadorAltura = 10;
+				jogadorLargura = 90;
+				// define a posição do player
+				jogadorPosicaoX = (canvas.width - jogadorLargura)/2;
+				jogadorPosicaoY  = canvas.height - jogadorAltura;
+				// define a velociadade de deslocamento
+				jogadorVelocidade = 30;
+			};
+
+			function ballProperty() {
+				// define o tamanho da bola
+				bolaRaio = 10;
+				// define a posicao da bola
+				bolaPosicaoX = canvas.width / 2;
+				bolaPosicaoY = -10;
+				// define a velocidade de deslocamento da bola
+				bolaVelocidade = 10;
+			};
+
+			function keyListener() {
+				document.addEventListener('keydown',keyDown);
+			};
+
+			function keyDown(k){				
+				switch(k.keyCode) {
+					case 37: // key <-
+						if(jogadorPosicaoX > 0) {
+							jogadorPosicaoX -= jogadorVelocidade;
+						}
+						break;
+					case 39: // key ->
+						if(jogadorPosicaoX < (canvas.width - jogadorLargura)) {
+							jogadorPosicaoX += jogadorVelocidade;
+						}
+						break;
+				}
+			};
+
+			function drawPlayer(x,y,width,height) {
+				// apaga um retangulo dentro de uma retangulo (div canvas) - (apaga o reastro do player)
+				context.clearRect(0,0,canvas.width,canvas.height);
+				// define a cor do player (retangulo)
+				context.fillStyle = "orange";
+				// desenha a barra(player)
+				context.fillRect(x, y, width,height);
+			};
+
+			function drawBall(x,y,r,sAngle,eAngle,counterclockwise){			
+				/**
+				 * x = coordenada-x para o centro do circulo
+				 * y = coordenada-y para o centro do circulo
+				 * r = raio do criculo
+				 * sAngle = O ângulo inicial, em radianos (0 é a posição de 3 horas de circulo do arco)
+				 * eAngle = O ângulo de término, em radianos
+				 * counterclockwise = (true) anti-horario e (false) horario
+				 */
+
+				// define um "caminho" ("beginPath")
+				context.beginPath();
+				// (arc) desenha um arco/circulo
+				context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+				context.fill();				
+
+				// define a posição em X onde a bola sera lançada
+				if(y <= canvas.height) {
+					bolaPosicaoY += bolaVelocidade;
+				}else {
+					bolaPosicaoX = Math.random() * canvas.width;
+					bolaPosicaoY = -13;
+					colisao = false;
+				}
+			};
+
+
+			function score(){
+				// identifica a colisao da bola com a barra/player e marca ponto
+				if((bolaPosicaoX > jogadorPosicaoX && bolaPosicaoX < jogadorPosicaoX + jogadorLargura) && bolaPosicaoY >= canvas.height - jogadorAltura  && colisao == false) {
+					jogadorPontos++;
+					colisao = true;
+				}
+
+				context.font = "32pt Tahoma";
+				context.fillText(jogadorPontos, canvas.width - 70, 70);
+			};
+
+			function gameLoop() {
+				// desenha player
+				drawPlayer(jogadorPosicaoX,canvas.height - jogadorAltura,jogadorLargura,jogadorAltura);
+				// desenha bola
+				drawBall(bolaPosicaoX,bolaPosicaoY,bolaRaio,0, Math.PI * 2, true);
+				// define a pontuação do jogo
+				score();
+			};
+		</script>
+
+	</head>
+	<body onload="inicializar()">
+		<canvas id="canvas" width="600" height="480"></canvas>
+	</body>
+</html>
