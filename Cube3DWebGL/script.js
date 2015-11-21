@@ -53,8 +53,8 @@ var main = function () {
     CANVAS.addEventListener("mouseout", mouseUp, false);
     CANVAS.addEventListener("mouseup", mouseUp, false);
     
-    CANVAS.addEventListener("touchstart", mouseDown, false);
-    //CANVAS.addEventListener("touchmove", mouseMove, false);
+    //CANVAS.addEventListener("touchstart", mouseDown, false);
+    CANVAS.addEventListener("touchmove", mouseMove, false);
     //CANVAS.addEventListener("touchcancel", mouseUp, false);
     //CANVAS.addEventListener("touchleave", mouseUp, false);
     //CANVAS.addEventListener("touchend", mouseUp, false);
