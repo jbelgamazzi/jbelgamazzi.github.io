@@ -54,10 +54,10 @@ var main = function () {
     CANVAS.addEventListener("mouseup", mouseUp, false);
     
     CANVAS.addEventListener("touchstart", mouseDown, false);
-    CANVAS.addEventListener("touchmove", mouseMove, false);
-    CANVAS.addEventListener("touchcancel", mouseUp, false);
-    CANVAS.addEventListener("touchleave", mouseUp, false);
-    CANVAS.addEventListener("touchend", mouseUp, false);
+    //CANVAS.addEventListener("touchmove", mouseMove, false);
+    //CANVAS.addEventListener("touchcancel", mouseUp, false);
+    //CANVAS.addEventListener("touchleave", mouseUp, false);
+    //CANVAS.addEventListener("touchend", mouseUp, false);
 
     /** Obtem contexto WebGL **/
     // esta variavel é o ponto de acesso com a lib
