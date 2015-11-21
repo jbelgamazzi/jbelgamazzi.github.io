@@ -53,12 +53,34 @@ var main = function () {
     CANVAS.addEventListener("mouseout", mouseUp, false);
     CANVAS.addEventListener("mouseup", mouseUp, false);
     
+
+    /** Obtem contexto WebGL **/
+    // esta variavel é o ponto de acesso com a lib
+    var GL;
+    //atribuimos a variavel GL todas as funconalidades da biblioteca webgl
+    try {
+        /**
+         * @method getContext
+         * Obtem o contexto de WebGL
+         * @param {string} contextType
+         *  "2d" => para contexto 2D que representa um contexto de renderização bidimensional
+         *  "WebGL" ou "experimental-WebGL" => para objeto que representa um contexto de renderização tridimensional
+         *  "Webgl2" ou "experimental-webgl2" =>  para objeto que representa um contexto de renderização tridimensional
+         * @param {object} contextAttributes
+         *  "antialias" => habilita a suavilização na criacao do contexto WebGL
+         */
+        GL = CANVAS.getContext("experimental-webgl", {antialias: true});
+    } catch (e) {
+        alert("Seu navegador nao tem suporte para WebGL.");
+        return false;
+    }
+
     var ongoingTouches = new Array; 
     
     function handleStart(evt) {
         evt.preventDefault();
         log("touchstart.");
-        var el = CANVAS[0];
+        var el = CANVAS;
         var ctx = el.getContext("2d");
         var touches = evt.changedTouches;
         
@@ -66,10 +88,10 @@ var main = function () {
             log("touchstart:"+i+"...");
             ongoingTouches.push(copyTouch(touches[i]));
             var color = colorForTouch(touches[i]);
-            ctx.beginPath();
-            ctx.arc(touches[i].pageX, touches[i].pageY, 4, 0,2*Math.PI, false);  // a circle at the start
-            ctx.fillStyle = color;
-            ctx.fill();
+            GL.beginPath();
+            GL.arc(touches[i].pageX, touches[i].pageY, 4, 0,2*Math.PI, false);  // a circle at the start
+            GL.fillStyle = color;
+            GL.fill();
             log("touchstart:"+i+".");
         }
     }
@@ -89,7 +111,7 @@ var main = function () {
     
     function handleMove(evt) {
   evt.preventDefault();
-  var el = CANVAS[0];
+  var el = CANVAS;
   var ctx = el.getContext("2d");
   var touches = evt.changedTouches;
 
@@ -99,14 +121,14 @@ var main = function () {
 
     if(idx >= 0) {
       log("continuing touch "+idx);
-      ctx.beginPath();
+      GL.beginPath();
       log("ctx.moveTo("+ongoingTouches[idx].pageX+", "+ongoingTouches[idx].pageY+");");
-      ctx.moveTo(ongoingTouches[idx].pageX, ongoingTouches[idx].pageY);
+      GL.moveTo(ongoingTouches[idx].pageX, ongoingTouches[idx].pageY);
       log("ctx.lineTo("+touches[i].pageX+", "+touches[i].pageY+");");
-      ctx.lineTo(touches[i].pageX, touches[i].pageY);
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = color;
-      ctx.stroke();
+      GL.lineTo(touches[i].pageX, touches[i].pageY);
+      GL.lineWidth = 4;
+      GL.strokeStyle = color;
+      GL.stroke();
 
       ongoingTouches.splice(idx, 1, copyTouch(touches[i]));  // swap in the new touch record
       log(".");
@@ -129,12 +151,12 @@ var main = function () {
         var idx = ongoingTouchIndexById(touches[i].identifier);
     
         if(idx >= 0) {
-          ctx.lineWidth = 4;
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.moveTo(ongoingTouches[idx].pageX, ongoingTouches[idx].pageY);
-          ctx.lineTo(touches[i].pageX, touches[i].pageY);
-          ctx.fillRect(touches[i].pageX-4, touches[i].pageY-4, 8, 8);  // and a square at the end
+          GL.lineWidth = 4;
+          GL.fillStyle = color;
+          GL.beginPath();
+          GL.moveTo(ongoingTouches[idx].pageX, ongoingTouches[idx].pageY);
+          GL.lineTo(touches[i].pageX, touches[i].pageY);
+          GL.fillRect(touches[i].pageX-4, touches[i].pageY-4, 8, 8);  // and a square at the end
           ongoingTouches.splice(idx, 1);  // remove it; we're done
         } else {
           log("can't figure out which touch to end");
@@ -167,26 +189,7 @@ var main = function () {
     CANVAS.addEventListener("touchleave", handleEnd, false);
     CANVAS.addEventListener("touchmove", handleMove, false);
 
-    /** Obtem contexto WebGL **/
-    // esta variavel é o ponto de acesso com a lib
-    var GL;
-    //atribuimos a variavel GL todas as funconalidades da biblioteca webgl
-    try {
-        /**
-         * @method getContext
-         * Obtem o contexto de WebGL
-         * @param {string} contextType
-         *  "2d" => para contexto 2D que representa um contexto de renderização bidimensional
-         *  "WebGL" ou "experimental-WebGL" => para objeto que representa um contexto de renderização tridimensional
-         *  "Webgl2" ou "experimental-webgl2" =>  para objeto que representa um contexto de renderização tridimensional
-         * @param {object} contextAttributes
-         *  "antialias" => habilita a suavilização na criacao do contexto WebGL
-         */
-        GL = CANVAS.getContext("experimental-webgl", {antialias: true});
-    } catch (e) {
-        alert("Seu navegador nao tem suporte para WebGL.");
-        return false;
-    }
+
 
      /** Shaders **/
 
